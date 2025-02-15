@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/* import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-const CommonForm = ({ formControls, onSubmit, buttonText }) => {
+const   CommonForm = ({ formControls, onSubmit, buttonText }) => {
   const {
     register,
     handleSubmit,
@@ -152,229 +152,117 @@ const CommonForm = ({ formControls, onSubmit, buttonText }) => {
   );
 };
 
+export default CommonForm; */
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+  SelectItem,
+} from "@/components/ui/select";
+import {  MailOpen } from "lucide-react";
+import { useCallback } from "react";
+
+const CommonForm = ({ formControls, formData, setFormData,onSubmit,buttonText}) => {
+  
+  const handleGoogleLogin = () => {
+    alert("Redirecting to Google login...");
+  };
+
+  const renderInputsByComponentType = (getControlItem) => {
+    if (!getControlItem) return null;   // Avoid errors if control is undefined
+    let element = null;
+    const value= formData[getControlItem.name] || ''; //way to print obj
+     console.log("value",value);
+     console.log("formdata",formData);
+    switch (getControlItem.componentType) {
+      case "input":
+        element = (
+          /* console.log("heelo"), */
+          <Input
+            name={getControlItem.name}
+            placeholder={getControlItem.placeholder}
+            id={getControlItem.name}
+            type={getControlItem.type}
+            value={value}
+            onChange={(event)=> {
+               setFormData({...formData,[getControlItem.name]: event.target.value})
+            }}
+          />
+        );
+        break;
+
+      case "select":
+        element = (
+          <Select onValueChange={(value)=>{
+            setFormData({...formData,[getControlItem.name]: value})
+          }} value={value}>
+            <SelectTrigger className="w-full">
+              <SelectValue
+                placeholder={getControlItem.placeholder}
+              ></SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+               {
+                getControlItem.options && getControlItem.options.length>0?
+                getControlItem.options.map((optionItem)=>{
+                  return <SelectItem key={optionItem.value} value={optionItem.value}>{optionItem.label}</SelectItem>
+                }):null
+               }
+            </SelectContent>
+          </Select>
+        );
+        break;
+      case "textarea":
+        element = (
+          <Textarea 
+          name={getControlItem.name}
+          plasholder={getControlItem.placeholder}
+          id={getControlItem.name}
+          value={value}
+          onChange={(event)=> {
+               setFormData({...formData,[getControlItem.name]: event.target.value})
+            }}
+          />
+        );
+        break;
+
+      /* default:
+        element = (
+          <Input
+            name={getControlItem.name}
+            plasholder={getControlItem.placeholder}
+            id={getControlItem.name}
+            type={getControlItem.type}
+          />
+        );
+        break; */
+    }
+    return element;
+  };
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 bg-blue-500 border-2 border-black">
+        {formControls.map((controlItem, i) => {
+          return (
+            <div className="grid w-full gap-1.5" key={controlItem.name}>
+             {console.log("starting again")}
+              <label htmlFor={controlItem.name} className="mb-1">
+                {controlItem.label}
+              </label>
+              {renderInputsByComponentType(controlItem)}
+            </div>
+          );
+        })}
+        <Button type="submit" className='w-full mt-2'>{buttonText || 'Submit'}</Button>
+        <Button onClick={handleGoogleLogin} className='w-full mt-1' variant="destructive"> <MailOpen /> Login with Email</Button>
+      </div>
+    </form>
+  );
+};
+
 export default CommonForm;
-
-
-// import React from "react";
-// import { useForm, Controller } from "react-hook-form";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import {
-//   Select,
-//   SelectTrigger,
-//   SelectValue,
-//   SelectContent,
-//   SelectItem,
-// } from "@/components/ui/select";
-// import { Button } from "@/components/ui/button";
-
-// const CommonForm = ({ formControls, onSubmit, buttonText }) => {
-//   const {
-//     register,
-//     handleSubmit,
-//     control,
-//     formState: { errors, isSubmitting },
-//     watch, // Use watch here from the same useForm instance
-//   } = useForm();
-
-//   // Watching all form fields
-//   const watchedData = watch(); 
-//   console.log("Real-time Data:", watchedData);
-
-//   const renderInputsByComponentType = (controlItem) => {
-//     switch (controlItem.componentType) {
-//       case "input":
-//         return (
-//           <Input
-//             id={controlItem.name}
-//             type={controlItem.type}
-//             placeholder={controlItem.placeholder}
-//             {...register(controlItem.name, controlItem.validation)}
-//             className={`border ${
-//               errors[controlItem.name] ? " border-red-600" : "border-gray-300"
-//             }`}
-//           />
-//         );
-//       case "select":
-//         return (
-//           <Controller
-//             name={controlItem.name}
-//             control={control}
-//             rules={controlItem.validation}
-//             render={({ field }) => (
-//               <Select {...field}>
-//                 <SelectTrigger>
-//                   <SelectValue placeholder={controlItem.placeholder} />
-//                 </SelectTrigger>
-//                 <SelectContent>
-//                   {controlItem.options.map((optionItem) => (
-//                     <SelectItem key={optionItem.value} value={optionItem.value}>
-//                       {optionItem.label}
-//                     </SelectItem>
-//                   ))}
-//                 </SelectContent>
-//               </Select>
-//             )}
-//           />
-//         );
-//       case "textarea":
-//         return (
-//           <Input
-//             id={controlItem.name}
-//             type="textarea"
-//             placeholder={controlItem.placeholder}
-//             {...register(controlItem.name, controlItem.validation)}
-//             className={`border ${
-//               errors[controlItem.name] ? "border-red-500" : "border-gray-300"
-//             }`}
-//           />
-//         );
-//       default:
-//         return (
-//           <Input
-//             varients=""
-//             id={controlItem.name}
-//             type={controlItem.type}
-//             placeholder={controlItem.placeholder}
-//             {...register(controlItem.name, controlItem.validation)}
-//             className={`border ${
-//               errors[controlItem.name] ? "border-red-500" : "border-gray-300"
-//             }`}
-//           />
-//         );
-//     }
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-//       {formControls.map((controlItem) => (
-//         <div key={controlItem.name} className="flex flex-col gap-2">
-//           <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
-//           {renderInputsByComponentType(controlItem)}
-//           {errors[controlItem.name] && (
-//             <span className="text-sm text-red-700">
-//               {errors[controlItem.name].message}
-//             </span>
-//           )}
-//         </div>
-//       ))}
-//       <Button
-//         type="submit"
-//         disabled={isSubmitting}
-//         className={`mt-4 ${
-//           isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-//         }`}
-//       >
-//         {buttonText || "Submit"}
-//       </Button>
-//     </form>
-//   );
-// };
-
-// export default CommonForm;
-
-
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// import { useForm } from "react-hook-form";
-
-// const CommonForm = ({formControls = [], formData = {}, setFormData, onSubmit, buttonText}) => {
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (onSubmit) onSubmit(formData);
-//   };
-
-//   const renderInputsByComponentType = (controlItem) => {
-//     console.log(controlItem);
-//     const value = formData[controlItem.name] || '';
-
-//     switch (controlItem.componentType) {
-//       case "input":
-//         return (
-//           <Input
-//             key={`input-${controlItem.name}`}
-//             name={controlItem.name}
-//             placeholder={controlItem.placeholder}
-//             id={controlItem.name}
-//             type={controlItem.type}
-//             value={value}
-//             onChange={(e) => {
-//               setFormData({...formData, [controlItem.name]: e.target.value})
-//             }}
-//           />
-//         );
-//       case "select":
-//         return (
-//           <Select
-//             key={`select-${controlItem.name}`}
-//             onValueChange={(value) => {
-//               setFormData({...formData, [controlItem.name]: value})
-//             }}
-//             value={value}
-//           >
-//             <SelectTrigger>
-//               <SelectValue placeholder={controlItem.placeholder} />
-//             </SelectTrigger>
-//             <SelectContent>
-//               {controlItem.options && controlItem.options.length > 0 ?
-//                 controlItem.options.map((optionItem) => (
-//                   <SelectItem
-//                     key={`option-${controlItem.name}-${optionItem.id}`}
-//                     value={optionItem.value}
-//                   >
-//                     {optionItem.label}
-//                   </SelectItem>
-//                 ))
-//               : null}
-//             </SelectContent>
-//           </Select>
-//         );
-//       case "textarea":
-//         return (
-//           <Input
-//             key={`textarea-${controlItem.name}`}
-//             name={controlItem.name}
-//             placeholder={controlItem.placeholder}
-//             id={controlItem.name}
-//             type="textarea"
-//             value={value}
-//             onChange={(e) => {
-//               setFormData({...formData, [controlItem.name]: e.target.value})
-//             }}
-//           />
-//         );
-//       default:
-//         return (
-//           <Input
-//             key={`default-${controlItem.name}`}
-//             name={controlItem.name}
-//             placeholder={controlItem.placeholder}
-//             id={controlItem.name}
-//             type={controlItem.type}
-//             value={value}
-//             onChange={(e) => {
-//               setFormData({...formData, [controlItem.name]: e.target.value})
-//             }}
-//           />
-//         );
-//     }
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-//       {formControls.map((controlItem) => (
-//         <div key={`field-${controlItem.name}`} className="flex flex-col gap-2">
-//           <Label  htmlFor={controlItem.name}>{controlItem.label}</Label>
-//           {renderInputsByComponentType(controlItem)}   {/* switch lai pathaucha */}
-//         </div>
-//       ))}
-//       <Button  variant="default" type="submit" className="mt-4">
-//         {buttonText || "Submit"}
-//       </Button>
-//     </form>
-//   );
-// };
-
-// export default CommonForm;

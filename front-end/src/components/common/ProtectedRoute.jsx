@@ -11,7 +11,8 @@ const PATHS = {
   SHOP: '/shop',
   AUTH_LOGIN: '/auth/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
-  SHOP_HOME: '/shop/home'
+  SHOP_HOME: '/shop/home',
+  UNAUTHORIZEDPAGE:'/unauth-page',
 };
 
 const ProtectedRoute = ({ children, isAuthenticated, user }) => {
@@ -42,7 +43,7 @@ const ProtectedRoute = ({ children, isAuthenticated, user }) => {
 
     // Role-based access control
     if (currentPath.includes(PATHS.ADMIN) && !isAdmin) {
-      return <Navigate to={PATHS.SHOP_HOME} />;
+      return <Navigate to={PATHS.UNAUTHORIZEDPAGE} />;
     }
     
     if (currentPath.includes(PATHS.SHOP) && isAdmin) {

@@ -1,3 +1,5 @@
+
+// 1st step yo banauni 2nd mah page mah app.jsx mah jani rah teta chainey component common form mah pass garni
 export const registerFormControls = [
   {
     name: "userName",
@@ -16,7 +18,7 @@ export const registerFormControls = [
     name: "email",
     label: "Email",
     placeholder: "Enter your email name",
-    componentType: "email",  //in needs to be email but if i add this type to email then it shows html validations
+    componentType: "input",  //in needs to be input but if i add this type to email then it shows html validations
     type: "email",
     validation: {
       required: "Email is required",
@@ -46,7 +48,7 @@ export const registerFormControls = [
 
 
 export const loginFormControls=[
-  {name: "email",
+  { name: "email",
     label: "Email",
     placeholder: "Enter your email name",
     componentType: "input",
