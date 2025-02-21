@@ -16,7 +16,7 @@ import UnauthPage from "@/pages/unauth-page";
 import { Route, Routes } from "react-router-dom";
 
 const App = () => {
-  const isAuthenticated=false;
+  const isAuthenticated=false; 
   const user={role:"user"};
   
   return (

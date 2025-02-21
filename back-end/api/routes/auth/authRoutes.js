@@ -8,7 +8,7 @@ import {
 let authRouter = Router();
 
 authRouter.post("/register", registerUser); //  kunchain frontend ko child page bata data pathauni ho rah kun ,function ley db mah save garcha
-authRouter.post("/login", loginUser);
+/* authRouter.post("/login", loginUser);
 authRouter.get("/check-auth", authMiddleware, async (req, res) => {
   //auth midddler ley token chaki chaina check garcha rah cha bhaney token ko data lai get garera middleware next mah pathaucha
   try {
@@ -40,7 +40,7 @@ authRouter.get("/check-auth", authMiddleware, async (req, res) => {
       message: "Internal Server Error",
     });
   }
-});
+}); */
 // authRouter.post('/refresh-token', refreshAccessToken);
 
 export default authRouter;

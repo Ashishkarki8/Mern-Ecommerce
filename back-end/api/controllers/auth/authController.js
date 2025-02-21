@@ -1,13 +1,17 @@
+//controller mah user use huncha
 import bcrypt from "bcryptjs";
 import { User } from "../../models/model.js";
 import userValidator from "../../validators/userValidator.js";
 import jwt from 'jsonwebtoken';
 import appConfig from "../../appConfig.js";
-import loginValidator from "../../validators/loginValidator.js";
+// import loginValidator from "../../validators/loginValidator.js";
 
 export const registerUser = async (req, res) => {
   try {
-    // Validate request body using Joi
+    console.log("hello from login")
+    console.log(req.body)
+    
+    // Validate request body using Joi ani validate using schema
     const { error, value } = userValidator.validate(req.body, {
       abortEarly: false, // Report all errors
       stripUnknown: true, // Remove unknown fields
@@ -54,7 +58,7 @@ export const registerUser = async (req, res) => {
     // Send successful response
     res
       .status(200)
-      .json({
+      .json({  //network ko preview rah response mah jancha
         success: true,
         message: "User registered successfully.",
         data: response,

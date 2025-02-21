@@ -82,7 +82,6 @@ const userValidator = Joi.object({
   //   subscribed: Joi.boolean().default(false),
   createdAt: Joi.date().default(() => new Date()), // Fixed default
   updatedAt: Joi.date().default(() => new Date()), // Fixed default
-  tokenVersion: { type: Number, default: 0 }
 });
 
 
