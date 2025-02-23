@@ -138,7 +138,7 @@ export const loginUser  = async (req, res) => {
       success: true,
       message: "Login successful",
       user: {
-        email: checkUser .email,
+       /*  email: checkUser .email, */
         role: checkUser .role,
         id: checkUser .id,
       },

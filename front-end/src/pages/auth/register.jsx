@@ -28,6 +28,7 @@ const AuthRegister = () => {
        toast.success(data.payload.message, {
          duration: 2000, // Default is 2 seconds
        });
+       navigate('/auth/login');
      } else {
        toast.error(data.payload.message || "Registration failed.", {
          duration: 2000,

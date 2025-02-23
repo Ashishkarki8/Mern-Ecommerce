@@ -17,8 +17,8 @@ const PATHS = {
 
 const ProtectedRoute = ({ children, isAuthenticated, user }) => {
   const location = useLocation();
-  
-
+  console.log("user",user); //undefined
+  console.log(isAuthenticated)
 
   console.log(location.pathname);
   // Single includes() check instead of multiple

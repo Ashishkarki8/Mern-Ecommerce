@@ -3,7 +3,7 @@ import { loginFormControls } from "@/config";
 import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const initialState={
@@ -15,17 +15,17 @@ const AuthLogin = () => {
   const [formData, setFormData] = useState(initialState);
   console.log("parent component is also rendering")
   const dispatch = useDispatch();
-  // const navigate = useNavigate();
+   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading, error } = useSelector((state) => state.auth);
   console.log("isloading", isLoading ,"isAuthenticated",isAuthenticated,"user",user);
   const onSubmit = (event) => {
     console.log("submit processed login ")
-    event.preventDefault();
+     event.preventDefault(); //page nai refresh huncha so so use garnai p
     dispatch(loginUser(formData)).then((data) => {  //if fullfilled  if succes true then then runs and later its gets updated in  state.user = action.payload.user || null
       console.log("data from login",data) //meta plus data plustype sab aaucha
       if (data?.payload?.success) {
         toast.success(data.payload.message,{duration:3000})
-        //  navigate('/auth/login');
+          
       }else {
         toast.error(data.payload.message || "Registration failed.", {
           duration: 2000,

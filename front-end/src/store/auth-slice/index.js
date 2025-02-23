@@ -1,57 +1,3 @@
-// // import appConfig from "@/appConfig";
-// import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-// import axios from "axios";
-
-
-// const initialState = {
-//     user: null,
-//     isAuthenticated: false,
-//     isLoading: true,  // Start with true
-//     error: null,
-//     // isInitialized: false  // Add this flag
-//   };
- 
-  
-//   export const registerUser = createAsyncThunk('/auth/register', async (formData, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.post("http://localhost:9000/api/auth/register", formData, {
-//         withCredentials: true,
-//       });
-//       return response.data;
-//     } catch (error) {
-//       return rejectWithValue(error.response?.data || { message: "Registration failed." });
-//     }
-//   });
-  
-// const authSlice=createSlice({
-//     name:"auth",
-//     initialState,
-//     reducers:{
-//         setUser:(state,action)=>{
-//         }
-//       },
-//         extraReducers:(builder)=>{
-//          builder
-//          .addCase(registerUser.pending,(state,action)=>{
-//              state.isLoading=true;
-//          })
-//          .addCase(registerUser.fulfilled,(state,action)=>{
-//             state.isLoading=false;
-//             state.user = action.payload.user || null;
-//             state.isAuthenticated = true;
-//          })
-//          .addCase(registerUser.rejected,(state,action)=>{  
-//             state.isLoading=false;
-//             state.error = action.payload?.message || "Registration failed.";
-//          });        
-//     },
-// })
-
-// export default authSlice.reducer;
-
-
-
-// import appConfig from "@/appConfig";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -65,11 +11,13 @@ const initialState = {
   };
  
   /* alert(initialState) */
+  console.log("index slice");
   export const registerUser = createAsyncThunk('/auth/register', async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post("http://localhost:9000/api/auth/register", formData, {
         withCredentials: true,
       });
+      console.log("from register index",response.data)
       return response.data;
     } catch (error) {
       console.error("Error response:", error.response?.data?.message);
@@ -115,7 +63,7 @@ const authSlice=createSlice({
             state.isAuthenticated = false;
             console.log("initialState fullfilled",initialState) ; 
             console.log("After updating state:", { ...state });
-            console.log("After initial state:", initialState );
+            console.log("After initial state:", initialState );     //jaba sakkincha tespachi feri main batai suru huncha
          })
          .addCase(registerUser.rejected, (state, action) => {  
           console.log("inside rejected case");
@@ -134,7 +82,7 @@ const authSlice=createSlice({
             console.log("fullfilled action",action); // response data plus meta()
             console.log("inside fulfilled case");   
             state.isLoading=false;
-            state.user = action.payload || null;
+            state.user = action.payload.user || null;
             state.isAuthenticated = true;
             console.log("After updating state: login", { ...state });
             console.log("After initial state: login", initialState );

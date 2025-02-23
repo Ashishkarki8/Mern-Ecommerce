@@ -13,11 +13,15 @@ import ShoppingHome from "@/pages/shopping-view/home";
 import ShoppingLayout from "@/pages/shopping-view/layout";
 import ShoppingListing from "@/pages/shopping-view/listing";
 import UnauthPage from "@/pages/unauth-page";
+import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 
 const App = () => {
-  const isAuthenticated=false; 
-  const user={role:"user"};
+  /* const isAuthenticated=false; 
+  const user={role:"user"}; */
+   
+  const { user, isAuthenticated, isLoading } = useSelector((state) => state.auth);
+  console.log("From login page","isloading", isLoading ,"isAuthenticated",isAuthenticated,"user",user);
   
   return (
     <div className="flex flex-col overflow-hidden bg-white">
