@@ -17,5 +17,5 @@ app.use(cookieParser())
 app.use(express.json())               //express.json()  
 
 app.use('/api/auth',authRouter)
-connectDb()
+connectDb();
 

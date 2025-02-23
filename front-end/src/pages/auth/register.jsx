@@ -1,10 +1,11 @@
 import CommonForm from "@/components/common/form";
 import { registerFormControls } from "@/config";
-import { useState } from "react";
 import { registerUser } from "@/store/auth-slice";
-import { useDispatch, useSelector } from "react-redux"; 
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+
 
 const AuthRegister = () => {
   let initialState = { userName: "", email: "", password: "" };
@@ -14,26 +15,26 @@ const AuthRegister = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading, error } = useSelector((state) => state.auth);
   console.log("isloading", isLoading);
+  //paila page rendering huncha ani matrai on submit ko bhitra ko chalcha
+  
   const onSubmit = (event,) => {
     event.preventDefault();
    console.log("Form submitted with:", formData);
-    dispatch(registerUser(formData)).then((data) => {  //if fullfilled  if succes true then then runs and later its gets updated in  state.user = action.payload.user || null
-        console.log("response data",data);
-        if (data?.payload?.success) {
-          toast({
-            // variant: "destructive" ,
-             title: data.payload.message,
-             duration:3000 ,// Default duration for toasts in 3 seconds
-          })
-          //  navigate('/auth/login');
-        }else{
-          toast({
-             variant: "destructive" ,
-             title: data.payload.message,
-             duration:3000 ,// Default duration for toasts in 3 seconds
-          })
-        }
-      })
+
+   dispatch(registerUser(formData)).then((data) => {  //yesma chain error message aaucha
+     console.log("response data", data);
+   
+     if (data?.payload?.success) {
+       toast.success(data.payload.message, {
+         duration: 2000, // Default is 2 seconds
+       });
+     } else {
+       toast.error(data.payload.message || "Registration failed.", {
+         duration: 2000,
+       });
+     }
+   });
+   
     ;
     // Handle the data here (e.g., send it to an API, etc.) 
   };
@@ -45,7 +46,7 @@ const AuthRegister = () => {
           <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl">
             Sign Up
           </h2>
-
+            <h3>{console.log("inside the register page rerendering")}</h3>
           <p>
             Already have an account?
             <Link

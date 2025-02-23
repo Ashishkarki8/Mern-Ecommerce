@@ -4,7 +4,7 @@ import { User } from "../../models/model.js";
 import userValidator from "../../validators/userValidator.js";
 import jwt from 'jsonwebtoken';
 import appConfig from "../../appConfig.js";
-// import loginValidator from "../../validators/loginValidator.js";
+ import loginValidator from "../../validators/loginValidator.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -36,8 +36,7 @@ export const registerUser = async (req, res) => {
     // Check if email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
+      return res.status(400)
         .json({
           success: false,
           message: "Email already exists.Please recheck your Email.",
@@ -61,7 +60,7 @@ export const registerUser = async (req, res) => {
       .json({  //network ko preview rah response mah jancha
         success: true,
         message: "User registered successfully.",
-        data: response,
+        data: response,   //frontend ko data mah backend mah insert bhako deta bascha
       });
   } catch (error) {
     // Handle database or server error
@@ -110,32 +109,29 @@ export const loginUser  = async (req, res) => {
       });
     }
 
-    // Now checkUser .password should be defined
-    console.log("Check User Password:", checkUser .password); // Log the password
-
-    const checkPasswordMatch = await bcrypt.compare(password, checkUser .password);
+  //check passwword match
+   const checkPasswordMatch = await bcrypt.compare(password, checkUser .password);
     if (!checkPasswordMatch) {
       return res.status(400).json({
         success: false,
         message: "Incorrect password, please try again",
       });
     }
-    
-
+  
     const token = jwt.sign(
       { id: checkUser.id, role: checkUser.role, /* email: checkUser.email  */},
       appConfig.userSecretKey,
-      { subject: "accessApi", expiresIn: appConfig.jwtExpirationTime }
+      { subject: "accessApi", expiresIn: parseInt(appConfig.jwtExpirationTime, 10)}
     );
     console.log("JWT Expiration Time:", appConfig.jwtExpirationTime);
-    console.log("Cookie Max-Age:", parseInt(appConfig.jwtExpirationTime) * 1000);
+    console.log("Cookie Max-Age:", parseInt(appConfig.jwtExpirationTime) * 1000);  //10
     // console.log("Generated Token:", token); // Log the generated token
 
     res.cookie("token", token, {
       httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
       secure: appConfig.nodeEnv === "production", // Set to true in production
       sameSite: "lax", // Adjust based on your needs
-      // maxAge: parseInt(appConfig.jwtExpirationTime) * 1000, // Convert to milliseconds it means it stays in browsers
+      maxAge: parseInt(appConfig.jwtExpirationTime, 10) * 1000,
       path: "/", // This should allow the cookie to be sent with requests to all routes
       domain: appConfig.cookieDomain || undefined, // Should be 'localhost' in development
     }).json({

@@ -25,7 +25,7 @@ const ProtectedRoute = ({ children, isAuthenticated, user }) => {
   const currentPath = location.pathname;
   const isAuthPath = currentPath.includes(PATHS.LOGIN) || currentPath.includes(PATHS.REGISTER);  
 
-  // Early return for unauthenticated users
+  // authenticated pani false cha ani login page or register page mah ni chaina bhani
   if (!isAuthenticated && !isAuthPath) {
     return <Navigate to={PATHS.AUTH_LOGIN} state={{ from: location }} />;
   }

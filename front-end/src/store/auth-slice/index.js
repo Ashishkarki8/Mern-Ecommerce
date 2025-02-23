@@ -64,19 +64,33 @@ const initialState = {
     // isInitialized: false  // Add this flag
   };
  
-  console.log(initialState)
-  export const registerUser = createAsyncThunk('/auth/register', async (formData) => {
+  /* alert(initialState) */
+  export const registerUser = createAsyncThunk('/auth/register', async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post("http://localhost:9000/api/auth/register", formData, {
         withCredentials: true,
       });
-      console.log("response from data",response.data) //preview ko data aayo state
       return response.data;
     } catch (error) {
-      return error;
+      console.error("Error response:", error.response?.data?.message);
+      return rejectWithValue(error.response?.data || { message: "Something went wrong" });
     }
   });
-  
+
+  export const loginUser = createAsyncThunk("/auth/login", async (formData, { rejectWithValue }) => {
+    try {
+
+      const response = await axios.post("http://localhost:9000/api/auth/login", formData, {
+        withCredentials: true,
+      });
+      console.log("response from login",response.data)
+      return response.data;  //action.payload
+    } catch (error) {
+      console.error("Error response:", error.response?.data?.message);
+      return rejectWithValue(error.response?.data || { message: "Something went wrong" });
+    }
+  });
+
 const authSlice=createSlice({
     name:"auth",
     initialState,
@@ -94,7 +108,7 @@ const authSlice=createSlice({
          .addCase(registerUser.fulfilled,(state,action)=>{
             console.log("fullfilled state",state); //func
             console.log("Before updating state:", { ...state });
-            console.log("fullfilled action",action); //data plus meta
+            console.log("fullfilled action",action); // response data plus meta()
             console.log("inside fulfilled case");   
             state.isLoading=false;
             state.user = action.payload.user || null;
@@ -103,12 +117,37 @@ const authSlice=createSlice({
             console.log("After updating state:", { ...state });
             console.log("After initial state:", initialState );
          })
-         .addCase(registerUser.rejected,(state,action)=>{  
-          console.log("inside rejected case"); 
+         .addCase(registerUser.rejected, (state, action) => {  
+          console.log("inside rejected case");
+          console.log("Rejected action:", action);
+          state.isLoading = false;
+          // If `rejectWithValue` is used, `action.payload` contains the response from the server.
+          state.error = action.payload?.message || action.error?.message || "Something went wrong.";
+        })
+        /* .addCase(loginUser.pending,(state,action)=>{
+          console.log("inside login pending case");
+          state.isLoading=true;
+         }) */
+         .addCase(loginUser.fulfilled,(state,action)=>{
+            console.log("fullfilled state",state);   //func
+            console.log("Before updating state:", { ...state });
+            console.log("fullfilled action",action); // response data plus meta()
+            console.log("inside fulfilled case");   
             state.isLoading=false;
-            // state.error=action.payload;
-            state.error = action.payload.message || "Registration failed.";
-         });        
+            state.user = action.payload || null;
+            state.isAuthenticated = true;
+            console.log("After updating state: login", { ...state });
+            console.log("After initial state: login", initialState );
+         })
+         .addCase(loginUser.rejected, (state, action) => {  
+          console.log("inside rejected case");
+          console.log("Rejected action:", action);
+          state.isLoading = false;
+          state.isAuthenticated = false;
+          // If `rejectWithValue` is used, `action.payload` contains the response from the server.
+          state.error = action.payload?.message || action.error?.message || "Something went wrong.";
+        });
+                
     },
 })
 

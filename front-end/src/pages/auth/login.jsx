@@ -1,10 +1,10 @@
 import CommonForm from "@/components/common/form";
 import { loginFormControls } from "@/config";
+import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
-/* import { toast } from "@/hooks/use-toast"; */
-// import { loginUser } from "@/store/auth-slice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const initialState={
   email:'',
@@ -14,27 +14,24 @@ const initialState={
 const AuthLogin = () => {
   const [formData, setFormData] = useState(initialState);
   console.log("parent component is also rendering")
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   // const navigate = useNavigate();
-  const onSubmit = (data,event) => {
+  const { user, isAuthenticated, isLoading, error } = useSelector((state) => state.auth);
+  console.log("isloading", isLoading ,"isAuthenticated",isAuthenticated,"user",user);
+  const onSubmit = (event) => {
+    console.log("submit processed login ")
     event.preventDefault();
-    /* dispatch(loginUser(data)).then((data) => {  //if fullfilled  if succes true then then runs and later its gets updated in  state.user = action.payload.user || null
-       
+    dispatch(loginUser(formData)).then((data) => {  //if fullfilled  if succes true then then runs and later its gets updated in  state.user = action.payload.user || null
+      console.log("data from login",data) //meta plus data plustype sab aaucha
       if (data?.payload?.success) {
-        toast({
-          // variant: "destructive" ,
-           title: data.payload.message,
-           duration:3000 ,// Default duration for toasts in 3 seconds
-        })
+        toast.success(data.payload.message,{duration:3000})
         //  navigate('/auth/login');
-      }else{
-        toast({
-           variant: "destructive" ,
-           title: data.payload.message,
-           duration:3000 ,// Default duration for toasts in 3 seconds
-        })
+      }else {
+        toast.error(data.payload.message || "Registration failed.", {
+          duration: 2000,
+        });
       }
-    }) */
+    })
   };
   
   return (
