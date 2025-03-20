@@ -169,9 +169,7 @@ import {  MailOpen } from "lucide-react";
 
 const CommonForm = ({ formControls, formData, setFormData,onSubmit,buttonText}) => {
   
-  const handleGoogleLogin = () => {
-    alert("Redirecting to Google login...");
-  };
+  
 
   const renderInputsByComponentType = (getControlItem) => {
     if (!getControlItem) return null;   // Avoid errors if control is undefined
@@ -259,7 +257,7 @@ const CommonForm = ({ formControls, formData, setFormData,onSubmit,buttonText}) 
           );
         })}
         <Button type="submit" className='w-full mt-2'>{buttonText || 'Submit'}</Button>
-        <Button onClick={handleGoogleLogin} className='w-full mt-1' variant="destructive"> <MailOpen /> Login with Email</Button>
+       {/*  <Button onClick={handleGoogleLogin} className='w-full mt-1' variant="destructive"> <MailOpen /> Login with Email</Button> */}
       </div>
     </form>
   );

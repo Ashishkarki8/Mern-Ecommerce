@@ -4,6 +4,7 @@ import appConfig from "./appConfig.js";
 import connectDb from "./connectDb.js";
 import corsOptions from "./corsConfig.js";
 import cookieParser from 'cookie-parser';
+import passport from "./config/passport.js";
 import authRouter from './routes/auth/authRoutes.js';
 
 const app=express()
@@ -16,6 +17,7 @@ app.options('*', cors(corsOptions));   // Handle preflight requests globally
 app.use(cookieParser())
 app.use(express.json())               //express.json()  
 
+app.use(passport.initialize());
 app.use('/api/auth',authRouter)
 connectDb();
 

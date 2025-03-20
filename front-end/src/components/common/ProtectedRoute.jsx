@@ -27,6 +27,7 @@ const ProtectedRoute = ({ children, isAuthenticated, user }) => {
 
   // authenticated pani false cha ani login page or register page mah ni chaina bhani
   if (!isAuthenticated && !isAuthPath) {
+    console.log("goes to login")
     return <Navigate to={PATHS.AUTH_LOGIN} state={{ from: location }} />;
   }
 
@@ -38,18 +39,23 @@ const ProtectedRoute = ({ children, isAuthenticated, user }) => {
     
     // Auth page redirects
     if (isAuthPath) {
+      console.log("dashnoard sending")
       return <Navigate to={isAdmin ? PATHS.ADMIN_DASHBOARD : PATHS.SHOP_HOME} />;
     }
 
     // Role-based access control
     if (currentPath.includes(PATHS.ADMIN) && !isAdmin) {
+      console.log("redirecting user to unauth page if tries admin url")
       return <Navigate to={PATHS.UNAUTHORIZEDPAGE} />;
     }
     
     if (currentPath.includes(PATHS.SHOP) && isAdmin) {
+      console.log("redirecting admin to admin dashboard  if tries user url")
       return <Navigate to={PATHS.ADMIN_DASHBOARD} />;
     }
   }
+  console.log("goes to children")
+  // When redirecting, only the ProtectedRoute is re-executing its checks, not the entire App
   return children; //kei ni prolem chaina bhani bhanekai url return gardini
     /*  How It Works Step by Step
     1️⃣ User visits /auth/login or /auth/register

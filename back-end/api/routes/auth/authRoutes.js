@@ -2,20 +2,78 @@ import { Router } from "express";
 import {
   authMiddleware,
   loginUser,
-  registerUser,
+  logoutUser,
+  setPassword,
 } from "../../controllers/auth/authController.js";
+import passport from "passport";
+import jwt from 'jsonwebtoken';
+import appConfig from "../../appConfig.js";
+import { User } from "../../models/model.js";
+
 
 let authRouter = Router();
 
-authRouter.post("/register", registerUser); //  kunchain frontend ko child page bata data pathauni ho rah kun ,function ley db mah save garcha
+authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+authRouter.get("/google/callback",
+  passport.authenticate("google", { failureRedirect: "http://localhost:5173/auth/login" ,session: false}),
+  async (req, res) => {
+    try {
+      console.log("inside/google")
+      const user = req.user;
+      console.log("user from",user)
+     
+       
+      const token = jwt.sign(
+        { id:  user._id, role: user.role, /* email: checkUser.email  */},
+        appConfig.userSecretKey,
+        { subject: "accessApi", expiresIn: parseInt(appConfig.jwtExpirationTime, 10)}
+      );
+      res.cookie("token", token, {
+        httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+        secure: appConfig.nodeEnv === "production", // Set to true in production
+        sameSite: "lax", // Adjust based on your needs
+        maxAge: parseInt(appConfig.jwtExpirationTime, 10) * 1000,
+        path: "/", // This should allow the cookie to be sent with requests to all routes
+        domain: appConfig.cookieDomain || undefined, // Should be 'localhost' in development
+      })
+
+      const existingUser = await User.findById(user._id).select("+password"); 
+
+      console.log("User from DB with password:", existingUser); 
+      
+       if (!existingUser.password) {
+        return res.redirect("http://localhost:5173/auth/set-password");
+      }
+
+
+   // Redirect to frontend dashboard
+      if (user.role==="admin") {
+        res.redirect("http://localhost:5173/admin/dashboard");
+      } else {
+        res.redirect("http://localhost:5173/shop/home");
+      }
+    
+      // res.redirect("http://localhost:5173/dashboard");
+    } catch (error) {
+      console.error("Error in Google callback:", error);
+      res.redirect("http://localhost:5173/login?error=server");
+    }
+  }
+);
+
+
+// authRouter.post("/register", registerUser); //  kunchain frontend ko child page bata data pathauni ho rah kun ,function ley db mah save garcha
 authRouter.post("/login", loginUser);
-/* authRouter.get("/check-auth", authMiddleware, async (req, res) => {
+authRouter.post("/set-password",setPassword);
+authRouter.post("/logout", logoutUser);
+authRouter.get("/check-auth", authMiddleware, async (req, res) => {
   //auth midddler ley token chaki chaina check garcha rah cha bhaney token ko data lai get garera middleware next mah pathaucha
   try {
     // Extract user from middleware-processed request
     const user = req.user;
     // console.log("sending data of user from next middleware to frontend", user)
     // Validate user object
+    //uta authmiddleware lai feri get garera check gareko
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -40,7 +98,6 @@ authRouter.post("/login", loginUser);
       message: "Internal Server Error",
     });
   }
-}); */
-// authRouter.post('/refresh-token', refreshAccessToken);
+});
 
 export default authRouter;

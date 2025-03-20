@@ -2,7 +2,8 @@ import { Schema } from "mongoose";
 
 const userSchema = Schema(
   {
-    userName: {
+    sub: { type: String, unique: true ,required:true }, // Google user ID
+    name: {
       type: String,
       required: true,
       /*  unique:true, */
@@ -19,6 +20,11 @@ const userSchema = Schema(
       trim: true,
       unique: true,
     },
+    
+    email_verified:{
+     typo:Boolean,
+     default:false
+    },
     // phoneNumber: {
     //   type: String,
     //   validate: {
@@ -29,15 +35,15 @@ const userSchema = Schema(
 
     password: {
       type: String,
-      required: true,
-      select: false  // Prevent password from being returned in queries
+      // required: true,
+      select: false, // Prevent password from being returned in queries
     },
     role: {
       type: String,
-    //   enum: ["user", "admin"], author means user editor means admin and admin means superadmin
+      //   enum: ["user", "admin"], author means user editor means admin and admin means superadmin
       default: "user",
     },
-   /*  gender: {
+    /*  gender: {
       type: String,
       enum: ["male", "female", "other"],
       required: true,
@@ -47,7 +53,7 @@ const userSchema = Schema(
     //   city: {required:false,type:String},
     //   place: {required:true,type:String},
     // },
-    profilePicture: {
+    picture: {
       type: String,
       default: "default-profile-pic.jpg",
     },
@@ -56,6 +62,11 @@ const userSchema = Schema(
       linkedin: String,
       github: String,
     },
+    email_verified: {
+      type: Boolean,
+      default: false,
+    },
+
     notificationPreferences: {
       email: {
         type: Boolean,
