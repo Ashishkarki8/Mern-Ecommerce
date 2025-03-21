@@ -30,6 +30,8 @@ const App = () => {
   }, [dispatch]) ;
 
   if (isLoading) {
+    console.log("isloading",isLoading)
+    alert("isloading active")
     return <div>loading ....</div>
   } 
 

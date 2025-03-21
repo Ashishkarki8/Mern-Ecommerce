@@ -10,19 +10,6 @@ const initialState = {
 
 /* alert(initialState) */
 console.log("index slice");
-/*   export const registerUser = createAsyncThunk('/auth/register', async (formData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post("http://localhost:9000/api/auth/register", formData, {
-        withCredentials: true,
-      });
-      console.log("from register index",response.data)
-      return response.data;
-    } catch (error) {
-      console.error("Error response:", error.response?.data?.message);
-      return rejectWithValue(error.response?.data || { message: "Something went wrong" });
-    }
-  });
- */
 
 export const loginUser = createAsyncThunk(
   "/auth/login",
@@ -69,25 +56,6 @@ export const setPassword = createAsyncThunk(
   }
 );
 
-/*  export const checkGoogleAuth = createAsyncThunk("/auth/google", async (_, { rejectWithValue }) => {
-    
-    try {
-      console.log("inside google auth");
-      const response = await axios.get("http://localhost:9000/api/auth/check-auth", {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-        },
-      });
-      console.log("checkAuth response",response)
-      return response.data;
-    } catch (error) {
-      console.log(" error from check auth" ,error) 
-      return rejectWithValue(error.response?.data.message || { message: "Something went wrong" }); ////yeta reject with value nabhayeni error message console huncha tara tala state mah pass hudaina error pmessage rah payload empty huncha so tesailey reject with value pass garna parcha to show below case payload
-      //etaa return gareko chij payload mah pass huncha               
-    }
-  }); */
 export const checkAuth = createAsyncThunk(
   "/auth/check-auth",
   async (_, { rejectWithValue }) => {
@@ -120,13 +88,16 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {},
+    resetError: (state) => {
+      state.error = null;
+    },
   },
+   
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
         console.log("inside login pending case");
-        state.isLoading = true;
+        // state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         console.log("fullfilled state", state); //func
@@ -167,7 +138,7 @@ const authSlice = createSlice({
       })
       .addCase(checkAuth.pending, (state) => {
         console.log("inside check auth pending case");
-        state.isLoading = true;
+        // state.isLoading = true;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         console.log("checkauth state", state); //func
