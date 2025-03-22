@@ -75,7 +75,7 @@ import { Route, Routes } from "react-router-dom";
 //if  isauthentication ===false garnu rah !isAuthentication garnu isAuthentication ===false,null,undefined,0,NaN,empty string, false, garnu ho 
 
 
-const App = () => {
+/* const App = () => {
   const { user, isAuthenticated, isLoading, error } = useSelector((state) => state.auth);
   const [authChecked, setAuthChecked] = useState(false);
   const dispatch = useDispatch();
@@ -120,6 +120,79 @@ const App = () => {
         </Route>
         
         <Route path="*" element={<Notfound />} />
+        <Route path="/unauth-page" element={<UnauthPage />} />
+      </Routes>
+    </div>
+  );
+};
+
+export default App; */
+
+
+
+const App = () => {
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const fetchAuth = async () => {
+      await dispatch(checkAuth());
+      setAuthChecked(true); // Mark authentication check as complete
+    };
+    fetchAuth();
+  }, [dispatch]);
+
+  // Don't render anything until authentication check is complete
+  if (!authChecked) {
+    return null; // Or return <></> for an empty fragment
+  }
+
+  return (
+    <div className="flex flex-col overflow-hidden bg-white">
+      <Routes>
+        <Route path="/" element={<div>This is home page</div>} />
+
+        <Route
+          path="/auth"
+          element={
+            <ProtectedRoute user={user} isAuthenticated={isAuthenticated}>
+              <AuthLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="login" element={<AuthLogin />} />
+          <Route path="set-password" element={<SetPassword />} />
+        </Route>
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute user={user} isAuthenticated={isAuthenticated}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="features" element={<AdminFeatures />} />
+        </Route>
+
+        <Route
+          path="/shop"
+          element={
+            <ProtectedRoute user={user} isAuthenticated={isAuthenticated}>
+              <ShoppingLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="home" element={<ShoppingHome />} />
+          <Route path="listing" element={<ShoppingListing />} />
+          <Route path="account" element={<ShoppingAccount />} />
+        </Route>
+
+        <Route path="" element={<Notfound />} />
         <Route path="/unauth-page" element={<UnauthPage />} />
       </Routes>
     </div>

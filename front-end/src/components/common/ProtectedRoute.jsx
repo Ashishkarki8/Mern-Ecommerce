@@ -71,6 +71,53 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 
 
+// const PATHS = {
+//   LOGIN: '/login',
+//   REGISTER: '/register',
+//   ADMIN: '/admin',
+//   SHOP: '/shop',
+//   AUTH_LOGIN: '/auth/login',
+//   ADMIN_DASHBOARD: '/admin/dashboard',
+//   SHOP_HOME: '/shop/home',
+//   UNAUTHORIZEDPAGE: '/unauth-page',
+// };
+
+// const ProtectedRoute = ({ children, isAuthenticated, user }) => {
+//   const location = useLocation();
+//   const currentPath = location.pathname;
+//   const isAuthPath = currentPath.includes(PATHS.LOGIN) || currentPath.includes(PATHS.REGISTER);  
+
+//   // Not authenticated and trying to access protected route
+//   if (!isAuthenticated && !isAuthPath) {
+//     return <Navigate to={PATHS.AUTH_LOGIN} state={{ from: location }} />;
+//   }
+
+//   // Handle authenticated users
+//   if (isAuthenticated) {
+//     const isAdmin = user?.role === 'admin';
+
+//     // Auth page redirects - already logged in users shouldn't see login pages
+//     if (isAuthPath) {
+//       return <Navigate to={isAdmin ? PATHS.ADMIN_DASHBOARD : PATHS.SHOP_HOME} />;
+//     }
+
+//     // Role-based access control
+//     if (currentPath.includes(PATHS.ADMIN) && !isAdmin) {
+//       return <Navigate to={PATHS.UNAUTHORIZEDPAGE} />;
+//     }
+
+//     if (currentPath.includes(PATHS.SHOP) && isAdmin) {
+//       return <Navigate to={PATHS.ADMIN_DASHBOARD} />;
+//     }
+//   }
+
+//   return children;
+// };
+
+// export default ProtectedRoute;
+
+
+
 const PATHS = {
   LOGIN: '/login',
   REGISTER: '/register',
@@ -85,18 +132,23 @@ const PATHS = {
 const ProtectedRoute = ({ children, isAuthenticated, user }) => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const isAuthPath = currentPath.includes(PATHS.LOGIN) || currentPath.includes(PATHS.REGISTER);  
+  const isAuthPath = currentPath.includes(PATHS.LOGIN) || currentPath.includes(PATHS.REGISTER);
 
-  // Not authenticated and trying to access protected route
+  // If authentication status is still being determined, don't redirect
+  if (isAuthenticated === undefined) {
+    return null; // Or return <></> for an empty fragment
+  }
+
+  // If not authenticated and not on an auth path, redirect to login
   if (!isAuthenticated && !isAuthPath) {
     return <Navigate to={PATHS.AUTH_LOGIN} state={{ from: location }} />;
   }
 
-  // Handle authenticated users
+  // If authenticated, handle role-based routing
   if (isAuthenticated) {
     const isAdmin = user?.role === 'admin';
 
-    // Auth page redirects - already logged in users shouldn't see login pages
+    // Redirect away from auth paths if already authenticated
     if (isAuthPath) {
       return <Navigate to={isAdmin ? PATHS.ADMIN_DASHBOARD : PATHS.SHOP_HOME} />;
     }
@@ -111,6 +163,7 @@ const ProtectedRoute = ({ children, isAuthenticated, user }) => {
     }
   }
 
+  // If no redirection is needed, render the children
   return children;
 };
 
