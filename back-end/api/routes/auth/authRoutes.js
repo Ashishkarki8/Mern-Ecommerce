@@ -71,7 +71,7 @@ authRouter.get("/check-auth", authMiddleware, async (req, res) => {
   try {
     // Extract user from middleware-processed request
     const user = req.user;
-    // console.log("sending data of user from next middleware to frontend", user)
+     console.log("sending data of user from next middleware to frontend", user)
     // Validate user object
     //uta authmiddleware lai feri get garera check gareko
     if (!user) {
@@ -80,15 +80,23 @@ authRouter.get("/check-auth", authMiddleware, async (req, res) => {
         message: "Unauthorized: User data not found.",
       });
     }
-
     // Log user for debugging (avoid logging sensitive data)
     // console.log("Authenticated User Details:", user);
-
+    const safeUser = {
+      id: user._id, 
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      picture: user.picture,
+      notificationPreferences: user.notificationPreferences,
+      createdAt: user.createdAt,
+      isPasswordSet: !!user.password,
+    };
     // Return success response
     res.status(200).json({
       success: true,
       message: "User authenticated successfully.",
-      user, // Send user data in response
+      user:safeUser, // Send user data in response
     });
   } catch (error) {
     // Catch unexpected errors

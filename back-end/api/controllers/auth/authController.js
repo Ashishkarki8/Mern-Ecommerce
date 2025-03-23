@@ -81,6 +81,7 @@ export const loginUser = async (req, res) => {
           /*  email: checkUser .email, */
           role: checkUser.role,
           id: checkUser.id,
+          isPasswordSet: !!checkUser.password,
         },
       });
   } catch (error) {
@@ -120,7 +121,8 @@ export const authMiddleware = async (req, res, next) => {
     const decodedToken = jwt.verify(token, appConfig.userSecretKey);
 
     // Check user existence in the database
-    const user = await User.findById(decodedToken.id); // Assuming `id` is in the token payload
+    const user = await User.findById(decodedToken.id).select('+password'); ; // Assuming `id` is in the token payload
+    console.log("user from auth middleware", user);
     if (!user) {
       return res.status(401).json({
         success: false,

@@ -30,7 +30,8 @@ const SetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const dispatch = useDispatch();
   const { isLoading, error } = useSelector((state) => state.auth);
-
+  const { user} = useSelector((state) => state.auth);
+  console.log("from setpassport",user )
   const {
     register,
     handleSubmit,
@@ -47,9 +48,15 @@ const SetPassword = () => {
   const onSubmit = async (data) => {
     try {
       const result = await dispatch(setPassword({ password: data.password })).unwrap();
+      console.log("result from the password js",result);
       if (result.success) {
         toast.success(result.message, { duration: 3000 });
-        window.location.href = "/shop/home";
+        console.log("user from the password js",user);
+         if (result?.role === "admin") {
+          window.location.href = "/admin/dashboard";
+        } else {
+          window.location.href = "/shop/home";
+        }
       }
     } catch (error) {
       toast.error(error.message || "Failed to set password", { duration: 2000 });
@@ -58,13 +65,19 @@ const SetPassword = () => {
 
   return (
     <div className="w-full max-w-md p-6 mx-auto bg-white rounded-lg shadow-md">
-      <h2 className="mb-6 text-2xl font-bold">Set Your Password</h2>
+    <div className="mb-6 text-center">
+    <h2 className="text-3xl font-bold text-gray-900">
+      Hi, <span className="text-blue-600">{user.name}</span>!
+    </h2>
+    <p className="mt-2 text-gray-600">Set your password to continue.</p>
+  </div>
+    {/*   <h2 className="mb-6 text-2xl font-bold">Hi! Set Your Password {user.name}</h2> */}
       
       {error && <p className="mb-4 text-red-500">{error}</p>}
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <Label htmlFor="password">New Password</Label>
+          <Label htmlFor="password">New Password </Label>
           <div className="relative">
             <Input
               id="password"
@@ -72,6 +85,7 @@ const SetPassword = () => {
               placeholder="Enter new password"
               className="pr-10 mt-1"
               {...register("password")}
+              autoComplete="new-password" 
             />
             <button
               type="button"
@@ -95,6 +109,7 @@ const SetPassword = () => {
               placeholder="Confirm new password"
               className="pr-10 mt-1"
               {...register("confirmPassword")}
+              autoComplete="new-password" 
             />
             <button
               type="button"
